@@ -5,5 +5,5 @@ The goal of this project is to allow Roblox users to have a highly interfaceable
 After pulling down just remember to run `npm install` and then you can run `npm run dev` to start the app.
 
 ## Testing
-Install this vscode extension in order to run just tests indvidually for the application:
+Install this vscode extension in order to run jest tests indvidually for the application:
  https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest
