@@ -33,7 +33,7 @@ const Home = () => {
     const newId = searchBars.length > 0
       ? Math.max(...searchBars.map(bar => bar.id)) + 1
       : 1;
-    const updatedSearchBars = [...searchBars, { id: newId, category: 'web', query: '' }];
+    const updatedSearchBars = [...searchBars, { id: newId, category: 'name', query: '' }];
     setSearchBars(updatedSearchBars);
 
     if (updatedSearchBars.length > 4 && !showTooltip) {
