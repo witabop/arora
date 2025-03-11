@@ -68,7 +68,7 @@
   
   .join-button {
     padding: 0.5rem 1.5rem;
-    background-color: #3ff29c;
+    background-color: #5431de;
     color: white;
     font-weight: 500;
     border-radius: 9999px;
@@ -77,7 +77,7 @@
   }
   
   .join-button:hover {
-    background-color: #34d588;
+    background-color: #4027a7;
     transform: scale(1.03);
   }
   

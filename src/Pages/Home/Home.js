@@ -5,6 +5,7 @@ import SearchBarComponent from '../../Components/SearchBar';
 import Tooltip from '../../Components/Tooltip';
 import Result from '../../Components/Result';
 import '../../styles/Home.css';
+import logo from '../../assets/aroralogo.png';
 
 const dummyGames = [
   {
@@ -91,13 +92,13 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    
+
     // Log the search criteria (for future API integration)
     console.log('Search Criteria:', searchBars);
-    
+
     // Filter out empty queries for API call
     const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
-    
+
     // In the future, we would make an API call here
     // For now, we'll just use our dummy data
     setSearchResults(dummyGames);
@@ -180,9 +181,13 @@ const Home = () => {
 
       <main className="main-content">
         <div className="logo-container">
-          <h1 className="logo-text">
-            ARO<span className="reversed-r">R</span>A
-          </h1>
+          <div className="logo-container">
+            <img
+              src={logo}
+              alt="ARORA Logo"
+              className="responsive-logo"
+            />
+          </div>
         </div>
 
         <form onSubmit={handleSearch} className="search-form">

@@ -84,12 +84,12 @@
   border: 1px solid #d1d5db;
   border-left: none;
   border-radius: 0 0.5rem 0.5rem 0;
-  box-shadow: 0 0 0 1px rgba(63, 242, 156, 0.3);
+  box-shadow: 0 0 0 1px rgba(81, 3, 175, 0.2);
 }
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(63, 242, 156, 0.5);
+  box-shadow: 0 0 0 1.2px #5431de58;
 }
 
 .delete-button {
