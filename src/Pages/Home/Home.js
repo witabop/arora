@@ -1,9 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faInfoCircle, faChartBar, faPlus, faExclamationTriangle, faX } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faInfoCircle, faChartBar, faPlus, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import SearchBarComponent from '../../Components/SearchBar';
 import Tooltip from '../../Components/Tooltip';
+import Result from '../../Components/Result';
 import '../../styles/Home.css';
+import logo from '../../assets/aroralogo.png';
+
+const dummyGames = [
+  {
+    id: 1,
+    name: 'Dungeon Quest Simulator',
+    description: 'Explore ancient dungeons, defeat epic bosses, and collect rare loot in this action-packed adventure game. Team up with friends or venture alone to uncover hidden treasures and secrets!',
+    matchPercentage: 95,
+    imageUrl: 'https://via.placeholder.com/120x120',
+    gameUrl: 'https://www.roblox.com/games/dungeon-quest'
+  },
+  {
+    id: 2,
+    name: 'City Life Roleplay',
+    description: 'Live your dream life in a bustling virtual city. Get a job, buy a house, drive luxury cars, and meet new friends. The possibilities are endless in this immersive roleplay experience!',
+    matchPercentage: 82,
+    imageUrl: 'https://via.placeholder.com/120x120',
+    gameUrl: 'https://www.roblox.com/games/city-life'
+  },
+  {
+    id: 3,
+    name: 'Zombie Survival',
+    description: 'Can you survive the zombie apocalypse? Scavenge for supplies, build defenses, and fight off hordes of the undead in this thrilling survival game. Cooperate with other survivors or fight for yourself!',
+    matchPercentage: 68,
+    imageUrl: 'https://via.placeholder.com/120x120',
+    gameUrl: 'https://www.roblox.com/games/zombie-survival'
+  },
+  {
+    id: 4,
+    name: 'Tycoon Empire',
+    description: 'Build your business empire from the ground up! Start with a small shop and expand into a massive industrial complex. Research new technologies, hire workers, and outperform your competitors.',
+    matchPercentage: 43,
+    imageUrl: 'https://via.placeholder.com/120x120',
+    gameUrl: 'https://www.roblox.com/games/tycoon-empire'
+  }
+];
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,11 +48,11 @@ const Home = () => {
   const [searchBars, setSearchBars] = useState([{ id: 1, category: 'name', query: '' }]);
   const [hasSearched, setHasSearched] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
   // Handle menu open/close with animation
   const toggleMenu = () => {
     if (isMenuOpen) {
-
       setMenuAnimation(false);
 
       setTimeout(() => {
@@ -55,6 +92,16 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+
+    // Log the search criteria (for future API integration)
+    console.log('Search Criteria:', searchBars);
+
+    // Filter out empty queries for API call
+    const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
+
+    // In the future, we would make an API call here
+    // For now, we'll just use our dummy data
+    setSearchResults(dummyGames);
     setHasSearched(true);
   };
 
@@ -134,9 +181,13 @@ const Home = () => {
 
       <main className="main-content">
         <div className="logo-container">
-          <h1 className="logo-text">
-            ARO<span className="reversed-r">R</span>A
-          </h1>
+          <div className="logo-container">
+            <img
+              src={logo}
+              alt="ARORA Logo"
+              className="responsive-logo"
+            />
+          </div>
         </div>
 
         <form onSubmit={handleSearch} className="search-form">
@@ -181,11 +232,8 @@ const Home = () => {
           <div className="results-container">
             <h2 className="results-title">Search Results</h2>
             <div className="results-list">
-              {searchBars.map((bar) => (
-                <div key={bar.id} className="result-item">
-                  <p><strong>Category:</strong> {bar.category}</p>
-                  <p><strong>Query:</strong> {bar.query || 'No query entered'}</p>
-                </div>
+              {searchResults.map(game => (
+                <Result key={game.id} game={game} />
               ))}
             </div>
           </div>

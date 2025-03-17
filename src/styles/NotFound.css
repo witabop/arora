@@ -1,0 +1,28 @@
+.not-found-container {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    text-align: center;
+    min-height: 100vh;
+  }
+
+  .not-found-container img {
+    max-width: 300px; 
+    width: 100%;
+    height: auto;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .not-found-container img {
+      max-width: 300px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .not-found-container img {
+      max-width: 220px;
+    }
+  }
