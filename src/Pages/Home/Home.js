@@ -42,13 +42,26 @@ const dummyGames = [
   }
 ];
 
+// Define all available criteria types
+const allCriteriaTypes = [
+  { id: 'amount', name: 'Amount', placeholder: '5', inputType: 'number', max: 15 },
+  { id: 'name', name: 'Name', placeholder: 'pick up 20 rocks simulator...', inputType: 'text' },
+  { id: 'description', name: 'Description', placeholder: 'in this game you pick up 20 rocks...', inputType: 'text' },
+  { id: 'plays', name: 'Plays', placeholder: '10000...', inputType: 'number' },
+  { id: 'likes', name: 'Likes', placeholder: '78922...', inputType: 'number' },
+  { id: 'players', name: 'Active Players', placeholder: '45...', inputType: 'number' }
+];
+
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuAnimation, setMenuAnimation] = useState(false);
-  const [searchBars, setSearchBars] = useState([{ id: 1, category: 'name', query: '' }]);
+  // Initialize with 'amount' as the default criteria
+  const [searchBars, setSearchBars] = useState([{ id: 1, category: 'amount', query: '' }]);
   const [hasSearched, setHasSearched] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  // Keep track of used criteria to prevent duplicates
+  const [usedCriteria, setUsedCriteria] = useState(['amount']);
 
   // Handle menu open/close with animation
   const toggleMenu = () => {
@@ -67,11 +80,25 @@ const Home = () => {
   };
 
   const addSearchBar = () => {
+    const availableCriteria = allCriteriaTypes.filter(type => !usedCriteria.includes(type.id));
+    
+    // show tooltip and don't add more search bars
+    if (availableCriteria.length === 0) {
+      setShowTooltip(true);
+      return;
+    }
+
+    // Create a new search bar with the first available criteria type
+    const newCategory = availableCriteria[0].id;
     const newId = searchBars.length > 0
       ? Math.max(...searchBars.map(bar => bar.id)) + 1
       : 1;
-    const updatedSearchBars = [...searchBars, { id: newId, category: 'name', query: '' }];
+    
+    const updatedSearchBars = [...searchBars, { id: newId, category: newCategory, query: '' }];
     setSearchBars(updatedSearchBars);
+    
+    // Update used criteria
+    setUsedCriteria([...usedCriteria, newCategory]);
 
     if (updatedSearchBars.length > 4 && !showTooltip) {
       setShowTooltip(true);
@@ -79,10 +106,19 @@ const Home = () => {
   };
 
   const deleteSearchBar = (id) => {
-    // Only delete if we have more than one search bar
+    // Find the search bar to be deleted
+    const barToDelete = searchBars.find(bar => bar.id === id);
+    
+    // Don't allow deletion of amount criteria
+    if (barToDelete.category === 'amount') {
+      return;
+    }
+
     if (searchBars.length > 1) {
       const updatedSearchBars = searchBars.filter(bar => bar.id !== id);
       setSearchBars(updatedSearchBars);
+      
+      setUsedCriteria(usedCriteria.filter(c => c !== barToDelete.category));
 
       if (updatedSearchBars.length <= 4 && showTooltip) {
         setShowTooltip(false);
@@ -92,27 +128,47 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    
 
-    // Log the search criteria (for future API integration)
     console.log('Search Criteria:', searchBars);
-
+    
     // Filter out empty queries for API call
     const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
-
+    
     // In the future, we would make an API call here
     // For now, we'll just use our dummy data
     setSearchResults(dummyGames);
     setHasSearched(true);
   };
 
-  const handleCategoryChange = (id, category) => {
+  const handleCategoryChange = (id, newCategory) => {
+    const searchBar = searchBars.find(bar => bar.id === id);
+    
+    if (searchBar.category === 'amount') {
+      return;
+    }
+    
+
+    const oldCategory = searchBar.category;
+    setUsedCriteria([...usedCriteria.filter(c => c !== oldCategory), newCategory]);
+    
+
     const updatedSearchBars = searchBars.map(bar =>
-      bar.id === id ? { ...bar, category, query: '' } : bar
+      bar.id === id ? { ...bar, category: newCategory, query: '' } : bar
     );
     setSearchBars(updatedSearchBars);
   };
 
   const handleQueryChange = (id, query) => {
+    // For 'amount' criteria, enforce max value of 15
+    const searchBar = searchBars.find(bar => bar.id === id);
+    if (searchBar.category === 'amount' && query !== '') {
+      const numValue = parseInt(query, 10);
+      if (!isNaN(numValue) && numValue > 15) {
+        query = '15';
+      }
+    }
+
     const updatedSearchBars = searchBars.map(bar =>
       bar.id === id ? { ...bar, query } : bar
     );
@@ -123,10 +179,25 @@ const Home = () => {
     setShowTooltip(false);
   };
 
+
+  const getAvailableCategories = (currentCategory) => {
+    if (currentCategory === 'amount') {
+      return [allCriteriaTypes.find(type => type.id === 'amount')];
+    }
+    
+    // return current + available
+    return [
+      allCriteriaTypes.find(type => type.id === currentCategory),
+      ...allCriteriaTypes.filter(type => !usedCriteria.includes(type.id))
+    ];
+  };
+
   return (
     <div className="homepage-container">
       <Tooltip
-        message="Adding too much criteria can slow down your search. Consider narrowing your criteria for quicker searches!"
+        message={allCriteriaTypes.length === usedCriteria.length 
+          ? "You've used all available criteria types." 
+          : "Adding too much criteria can slow down your search. Consider narrowing your criteria for quicker searches!"}
         type="warning"
         visible={showTooltip}
         onClose={handleCloseTooltip}
@@ -181,13 +252,11 @@ const Home = () => {
 
       <main className="main-content">
         <div className="logo-container">
-          <div className="logo-container">
-            <img
-              src={logo}
-              alt="ARORA Logo"
-              className="responsive-logo"
-            />
-          </div>
+          <img
+            src={logo}
+            alt="ARORA Logo"
+            className="responsive-logo"
+          />
         </div>
 
         <form onSubmit={handleSearch} className="search-form">
@@ -200,13 +269,16 @@ const Home = () => {
                 onCategoryChange={(category) => handleCategoryChange(searchBar.id, category)}
                 onQueryChange={(query) => handleQueryChange(searchBar.id, query)}
                 onDelete={() => deleteSearchBar(searchBar.id)}
-                showDeleteButton={searchBars.length > 1}
+                showDeleteButton={searchBar.category !== 'amount' && searchBars.length > 1}
+                availableCategories={getAvailableCategories(searchBar.category)}
+                disableDropdown={searchBar.category === 'amount'}
+                maxValue={searchBar.category === 'amount' ? 15 : null}
+                placeholder={searchBar.category === 'amount' ? '5' : null}
               />
             ))}
           </div>
 
           <div className="add-search-container">
-
           </div>
 
           <div className="search-button-container">
@@ -220,6 +292,7 @@ const Home = () => {
               type="button"
               onClick={addSearchBar}
               className="add-search-button"
+              disabled={allCriteriaTypes.length === usedCriteria.length}
             >
               <FontAwesomeIcon icon={faPlus} className="add-icon" />
               Add criteria
