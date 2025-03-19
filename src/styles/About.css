@@ -1,15 +1,162 @@
-.About {
-  text-align: center;
+
+.aboutpage-container {
+  position: relative;
+  min-height: 100vh;
+  background-color: white;
+}
+
+.faq-container {
+  width: 80%;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+.hamburger-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+}
+
+.menu-button {
+  color: black;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-button:hover {
+  color: #555;
 }
 
 
-.About-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+.menu-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.menu-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.sliding-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 16rem;
+  height: 100%;
+  background-color: black;
+  color: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  z-index: 9999;
+}
+
+.menu-open {
+  transform: translateX(0);
+}
+
+.menu-closed {
+  transform: translateX(100%);
+}
+
+.menu-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.menu-close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-button {
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #CCC;
+}
+
+.menu-nav {
+  margin-top: 2rem;
+}
+
+.menu-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-link:hover {
+  color: #CCC;
+}
+
+.menu-icon {
+  margin-right: 1rem;
+}
+
+.main-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 1rem;
+  min-height: 90vh;
+}
+
+.logo-container {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.logo-container img {
+  max-width: 250px; 
+  width: 100%;
+  height: auto;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .logo-container img {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-container img {
+    max-width: 150px;
+  }
 }
