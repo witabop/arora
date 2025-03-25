@@ -135,6 +135,8 @@ const Home = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+
+    if (searchActive) return;
     
     setSearchActive(true);
 
@@ -330,6 +332,7 @@ const Home = () => {
             <button
               type="submit"
               className={"search-button " + (searchActive ? 'search-button-active' : '')}
+              disabled={searchActive}
             >
               {(searchActive ? 'Searching' : 'Search')}
             </button>

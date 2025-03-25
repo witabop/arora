@@ -258,6 +258,7 @@
   width: 260px;
   border-width: 2px;
   animation: rainbow-border 3s linear infinite;
+  cursor: not-allowed;
 }
 
 .search-button-active::before {
@@ -318,6 +319,7 @@
 
 .search-progress-text-1, .search-progress-text-2, .search-progress-text-3, .search-progress-text-4 {
   text-align: center;
+  font-style: italic;
   content: "";
   transform: translateY(24px);
 }
