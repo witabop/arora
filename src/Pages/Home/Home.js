@@ -52,6 +52,10 @@ const allCriteriaTypes = [
   { id: 'players', name: 'Active Players', placeholder: '45...', inputType: 'number' }
 ];
 
+const delay = ms => new Promise(
+  resolve => setTimeout(resolve, ms)
+);
+
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuAnimation, setMenuAnimation] = useState(false);
@@ -60,6 +64,9 @@ const Home = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  // Search feedback fields
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchTextClass, setSearchTextClass] = useState(['class']);
   // Keep track of used criteria to prevent duplicates
   const [usedCriteria, setUsedCriteria] = useState(['amount']);
 
@@ -126,11 +133,40 @@ const Home = () => {
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     
+    setSearchActive(true);
 
     console.log('Search Criteria:', searchBars);
+
+    // Step 1: Request received
+    setSearchTextClass("search-progress-text-4 text-fade");
+    await delay(500); // These two 500ms delays act as a 1s minimum delay to prevent rapid graphic changes for each of these steps
+    setSearchTextClass("search-progress-text-1 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-1");
+
+    await delay(2000); // Additional delay to simulate loading for now
+                       // This is probably where the code would be to await a signal to move to the next step
+
+    // Step 2: Thinking
+    setSearchTextClass("search-progress-text-1 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-2 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-2");
+
+    await delay(2000); // Another loading simulation delay
+
+    // Step 3: Data received
+    setSearchTextClass("search-progress-text-2 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-3 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-3");
+
+    await delay(2000); // Processing simulation delay (?)
     
     // Filter out empty queries for API call
     const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
@@ -139,6 +175,15 @@ const Home = () => {
     // For now, we'll just use our dummy data
     setSearchResults(dummyGames);
     setHasSearched(true);
+
+    // Step 4: (clear text)
+    setSearchTextClass("search-progress-text-3 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-4 text-fade");
+    await delay(500);
+    setSearchTextClass("search-progress-text-4");
+    
+    setSearchActive(false);
   };
 
   const handleCategoryChange = (id, newCategory) => {
@@ -284,9 +329,9 @@ const Home = () => {
           <div className="search-button-container">
             <button
               type="submit"
-              className="search-button"
+              className={"search-button " + (searchActive ? 'search-button-active' : '')}
             >
-              Search
+              {(searchActive ? 'Searching' : 'Search')}
             </button>
             <button
               type="button"
@@ -297,6 +342,9 @@ const Home = () => {
               <FontAwesomeIcon icon={faPlus} className="add-icon" />
               Add criteria
             </button>
+          </div>
+          <div class="search-progress-text-container">
+            <p class={"search-progress-text " + searchTextClass}/>
           </div>
         </form>
 

@@ -223,11 +223,15 @@
   border: 1px solid #5431de;
   cursor: pointer;
   transition: transform 0.3s ease-in;
-  position: relative;
+  position: absolute;
+  left: calc(50% - 130px);
+  transition: width 2s;
+  width: 121px;
+  z-index: 1;
 }
 
 .search-button:hover {
-  transform: scale(1.05);
+  transform: scale(1.05), translate(calc(5px / -3px), -6.05px);
   border-width: 2px;
   animation: rainbow-border 3s linear infinite;
 }
@@ -249,6 +253,31 @@
   animation: rainbow-swim 3s linear infinite;
   filter: blur(1px);
 }
+
+.search-button-active {
+  width: 260px;
+  border-width: 2px;
+  animation: rainbow-border 3s linear infinite;
+}
+
+.search-button-active::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    45deg,
+    rgb(91, 20, 190), #3ff29c,#4b0082
+  );
+  background-size: 200% 200%;
+  z-index: -1;
+  animation: rainbow-swim 3s linear infinite;
+  filter: blur(1px);
+}
+
 .add-search-button {
   display: flex;
   align-items: center;
@@ -259,6 +288,9 @@
   border: 1px solid #5431de;
   cursor: pointer;
   transition: border-color 0.2s;
+  position: absolute;
+  right: calc(50% - 130px);
+  width: 121px;
 }
 
 .add-search-button:hover {
@@ -269,9 +301,46 @@
   margin-right: 0.5rem;
 }
 
+.search-progress-text-container {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+@keyframes text-fade {
+  from  {opacity: 0%;}
+  to    {opacity: 100%;}
+}
+
+.text-fade {
+  animation: text-fade 0.5s linear 0s infinite alternate-reverse;
+}
+
+.search-progress-text-1, .search-progress-text-2, .search-progress-text-3, .search-progress-text-4 {
+  text-align: center;
+  content: "";
+  transform: translateY(24px);
+}
+
+.search-progress-text-1::after {
+  content: "Request received";
+}
+
+.search-progress-text-2::after {
+  content: "Thinking";
+}
+
+.search-progress-text-3::after {
+  content: "Data received";
+}
+
+.search-progress-text-4::after {
+  content: "";
+}
+
 
 .results-container {
-  margin-top: 3rem;
+  margin-top: 5rem;
   width: 100%;
   max-width: 48rem;
   padding: 1.5rem;
