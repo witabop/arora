@@ -347,7 +347,7 @@ const Home = () => {
             </button>
           </div>
           <div class="search-progress-text-container">
-            <p class={"search-progress-text " + searchTextClass}/>
+            <p class={searchTextClass}/>
           </div>
         </form>
 
