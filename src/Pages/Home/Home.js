@@ -380,13 +380,8 @@ const Home = () => {
               Add criteria
             </button>
           </div>
-<<<<<<< HEAD
           <div className="search-progress-text-container">
             <p className={searchTextClass} />
-=======
-          <div class="search-progress-text-container">
-            <p class={searchTextClass}/>
->>>>>>> aca1c595cd5b0e7c74bfb3d23677f1b4d31fd608
           </div>
         </form>
 
