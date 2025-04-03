@@ -1,48 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faInfoCircle, faChartBar, faPlus, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faInfoCircle, faChartBar, faPlus, faExclamationTriangle, faPaperPlane, faBrain, faCheckCircle, faArrowRotateLeft, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import SearchBarComponent from '../../Components/SearchBar';
 import Tooltip from '../../Components/Tooltip';
 import Result from '../../Components/Result';
 import '../../styles/Home.css';
 import logo from '../../assets/aroralogo.png';
 import axios from 'axios';
-
-
-const dummyGames = [
-  {
-    id: 1,
-    name: 'Dungeon Quest Simulator',
-    description: 'Explore ancient dungeons, defeat epic bosses, and collect rare loot in this action-packed adventure game. Team up with friends or venture alone to uncover hidden treasures and secrets!',
-    matchPercentage: 95,
-    imageUrl: 'https://via.placeholder.com/120x120',
-    gameUrl: 'https://www.roblox.com/games/dungeon-quest'
-  },
-  {
-    id: 2,
-    name: 'City Life Roleplay',
-    description: 'Live your dream life in a bustling virtual city. Get a job, buy a house, drive luxury cars, and meet new friends. The possibilities are endless in this immersive roleplay experience!',
-    matchPercentage: 82,
-    imageUrl: 'https://via.placeholder.com/120x120',
-    gameUrl: 'https://www.roblox.com/games/city-life'
-  },
-  {
-    id: 3,
-    name: 'Zombie Survival',
-    description: 'Can you survive the zombie apocalypse? Scavenge for supplies, build defenses, and fight off hordes of the undead in this thrilling survival game. Cooperate with other survivors or fight for yourself!',
-    matchPercentage: 68,
-    imageUrl: 'https://via.placeholder.com/120x120',
-    gameUrl: 'https://www.roblox.com/games/zombie-survival'
-  },
-  {
-    id: 4,
-    name: 'Tycoon Empire',
-    description: 'Build your business empire from the ground up! Start with a small shop and expand into a massive industrial complex. Research new technologies, hire workers, and outperform your competitors.',
-    matchPercentage: 43,
-    imageUrl: 'https://via.placeholder.com/120x120',
-    gameUrl: 'https://www.roblox.com/games/tycoon-empire'
-  }
-];
 
 // Define all available criteria types
 const allCriteriaTypes = [
@@ -158,9 +122,6 @@ const Home = () => {
 
     setSearchActive(true);
 
-    console.log('Search Criteria:', searchBars);
-
-
     // Step 1: Request received
     setSearchTextClass("search-progress-text-4 text-fade");
     await delay(500); // These two 500ms delays act as a 1s minimum delay to prevent rapid graphic changes for each of these steps
@@ -168,8 +129,7 @@ const Home = () => {
     await delay(500);
     setSearchTextClass("search-progress-text-1");
 
-    await delay(2000); // Additional delay to simulate loading for now
-    // This is probably where the code would be to await a signal to move to the next step
+    await delay(2000); 
 
     // Step 2: Thinking
     setSearchTextClass("search-progress-text-1 text-fade");
@@ -191,17 +151,6 @@ const Home = () => {
     })
     const games = res.data['data'];
     console.log(games);
-    // await delay(2000); // Another loading simulation delay
-
-    // Step 3: Data received
-    setSearchTextClass("search-progress-text-2 text-fade");
-    await delay(500);
-    setSearchTextClass("search-progress-text-3 text-fade");
-    await delay(500);
-    setSearchTextClass("search-progress-text-3");
-
-    await delay(2000); // Processing simulation delay (?)
-
     // Filter out empty queries for API call
     const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
 
@@ -209,15 +158,43 @@ const Home = () => {
       const imageUrl = await getImageURL(game.id);
       return { ...game, matchPercentage: calculatePercentage(game, searchBars), imageUrl: imageUrl, gameUrl: `https://www.roblox.com/games/start?placeId=${game.rootPlaceId}` };
     }))
-    setSearchResults(fulfilledGames);
-    setHasSearched(true);
+    
+    
 
-    // Step 4: (clear text)
-    setSearchTextClass("search-progress-text-3 text-fade");
-    await delay(500);
-    setSearchTextClass("search-progress-text-4 text-fade");
-    await delay(500);
-    setSearchTextClass("search-progress-text-4");
+    // Show No Results message if no games found
+    if (fulfilledGames.length === 0) {
+      setSearchTextClass("search-progress-text-2 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-no-results text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-no-results");
+      // Keep the no results message visible for 3 seconds
+      await delay(3000);
+      setSearchTextClass("search-progress-text-no-results text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-4 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-4");
+    } else {
+      // Step 4: (clear text) for successful search
+      setSearchTextClass("search-progress-text-2 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-3 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-3");
+      await delay(200);
+      setSearchTextClass("search-progress-text-3 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-4 text-fade");
+      await delay(500);
+      setSearchTextClass("search-progress-text-4");
+    }
+
+    // Accumulate search results instead of replacing them
+    if (fulfilledGames.length > 0) {
+      setSearchResults(prevResults => [...prevResults, ...fulfilledGames]);
+      setHasSearched(true);
+    }
 
     setSearchActive(false);
   };
@@ -241,12 +218,25 @@ const Home = () => {
   };
 
   const handleQueryChange = (id, query) => {
-    // For 'amount' criteria, enforce max value of 15
     const searchBar = searchBars.find(bar => bar.id === id);
-    if (searchBar.category === 'amount' && query !== '') {
-      const numValue = parseInt(query, 10);
-      if (!isNaN(numValue) && numValue > 15) {
-        query = '15';
+    
+    // Handle numerical inputs
+    if (searchBar.category === 'amount' || 
+        searchBar.category === 'plays' || 
+        searchBar.category === 'likes' || 
+        searchBar.category === 'players') {
+      
+      // Prevent negative values
+      if (query.startsWith('-')) {
+        query = query.substring(1);
+      }
+      
+      // For 'amount' criteria, enforce max value of 15
+      if (searchBar.category === 'amount' && query !== '') {
+        const numValue = parseInt(query, 10);
+        if (!isNaN(numValue) && numValue > 15) {
+          query = '15';
+        }
       }
     }
 
@@ -260,6 +250,11 @@ const Home = () => {
     setShowTooltip(false);
   };
 
+  // Clear search results
+  const clearSearchResults = () => {
+    setSearchResults([]);
+    setHasSearched(false);
+  };
 
   const getAvailableCategories = (currentCategory) => {
     if (currentCategory === 'amount') {
@@ -319,12 +314,6 @@ const Home = () => {
                     About
                   </a>
                 </li>
-                <li className="menu-item">
-                  <a href="#" className="menu-link">
-                    <FontAwesomeIcon icon={faChartBar} className="menu-icon" />
-                    Stats
-                  </a>
-                </li>
               </ul>
             </nav>
           </div>
@@ -381,17 +370,35 @@ const Home = () => {
             </button>
           </div>
           <div className="search-progress-text-container">
-            <p className={searchTextClass} />
+            <div className={searchTextClass}>
+              {searchTextClass.includes("search-progress-text-1") && 
+                <FontAwesomeIcon icon={faPaperPlane} className="progress-icon" />}
+              {searchTextClass.includes("search-progress-text-2") && 
+                <FontAwesomeIcon icon={faBrain} className="progress-icon" />}
+              {searchTextClass.includes("search-progress-text-3") && 
+                <FontAwesomeIcon icon={faCheckCircle} className="progress-icon" />}
+              {searchTextClass.includes("search-progress-text-no-results") && 
+                <FontAwesomeIcon icon={faArrowRotateLeft} className="progress-icon rotate-icon" />}
+            </div>
           </div>
         </form>
 
         {/* Search results */}
         {hasSearched && (
           <div className="results-container">
-            <h2 className="results-title">Search Results</h2>
+            <div className="results-header">
+              <h2 className="results-title">Search Results</h2>
+              <button 
+                className="clear-results-button"
+                onClick={clearSearchResults}
+                aria-label="Clear results"
+              >
+                Clear
+              </button>
+            </div>
             <div className="results-list">
-              {searchResults.map(game => (
-                <Result key={game.id} game={game} />
+              {searchResults.map((game, index) => (
+                <Result key={`${game.id}-${index}`} game={game} />
               ))}
             </div>
           </div>

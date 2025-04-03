@@ -1,4 +1,3 @@
-
 .homepage-container {
   position: relative;
   min-height: 100vh;
@@ -306,6 +305,7 @@
   position: absolute;
   left: 0;
   width: 100%;
+  margin-top: 7px;
 }
 
 @keyframes text-fade {
@@ -317,25 +317,41 @@
   animation: text-fade 0.5s linear 0s infinite alternate-reverse;
 }
 
-.search-progress-text-1, .search-progress-text-2, .search-progress-text-3, .search-progress-text-4 {
+.search-progress-text-1, .search-progress-text-2, .search-progress-text-3, .search-progress-text-4, .search-progress-text-no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   font-style: italic;
-  content: "";
   transform: translateY(40px);
   opacity: 75%;
   font-size: 0.9rem;
+  gap: 8px;
+}
+
+.progress-icon {
+  margin-right: 4px;
+}
+
+.rotate-icon {
+  color: #4a7baf;
 }
 
 .search-progress-text-1::after {
-  content: "Request received";
+  content: "Request received!";
 }
 
 .search-progress-text-2::after {
-  content: "Thinking";
+  content: "Thinking...";
 }
 
 .search-progress-text-3::after {
-  content: "Data received";
+  content: "Data received!";
+}
+
+.search-progress-text-no-results::after {
+  content: "No results found, please try again...";
+  color: #4a7baf;
 }
 
 .search-progress-text-4::after {
@@ -353,10 +369,33 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+
 .results-title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin: 0;
+}
+
+.clear-results-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e63946;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0;
+  margin-bottom: 15px;
+  transition: transform 0.2s ease;
+}
+
+.clear-results-button:hover {
+  transform: translateY(-2px);
 }
 
 .results-list {
@@ -393,8 +432,3 @@
   }
 }
 
-@media (max-width: 480px) {
-  .logo-container img {
-    max-width: 150px;
-  }
-}

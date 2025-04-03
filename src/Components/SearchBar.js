@@ -41,18 +41,10 @@ const SearchBar = ({
     setIsDropdownOpen(false);
   };
 
-  // max value
   const handleInputChange = (e) => {
     let value = e.target.value;
     
-    // 
-    if (selectedCategory.inputType === 'number' && maxValue !== null && value !== '') {
-      const numValue = parseInt(value, 10);
-      if (!isNaN(numValue) && numValue > maxValue) {
-        value = maxValue.toString();
-      }
-    }
-    
+    // Handle value constraints for numerical inputs
     onQueryChange(value);
   };
 
@@ -108,11 +100,11 @@ const SearchBar = ({
           value={query}
           onChange={handleInputChange}
           className="search-input"
+          min="0" // Prevent negative values for number inputs
           max={maxValue}
         />
       </div>
       
-   
       {isHovered && showDeleteButton && (
         <button
           type="button"
