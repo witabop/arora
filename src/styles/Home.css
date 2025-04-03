@@ -310,7 +310,7 @@
 
 @keyframes text-fade {
   from  {opacity: 0%;}
-  to    {opacity: 100%;}
+  to    {opacity: 75%;}
 }
 
 .text-fade {
@@ -321,7 +321,9 @@
   text-align: center;
   font-style: italic;
   content: "";
-  transform: translateY(24px);
+  transform: translateY(40px);
+  opacity: 75%;
+  font-size: 0.9rem;
 }
 
 .search-progress-text-1::after {
@@ -342,7 +344,7 @@
 
 
 .results-container {
-  margin-top: 5rem;
+  margin-top: 6rem;
   width: 100%;
   max-width: 48rem;
   padding: 1.5rem;

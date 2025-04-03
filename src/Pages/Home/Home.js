@@ -6,6 +6,8 @@ import Tooltip from '../../Components/Tooltip';
 import Result from '../../Components/Result';
 import '../../styles/Home.css';
 import logo from '../../assets/aroralogo.png';
+import axios from 'axios';
+
 
 const dummyGames = [
   {
@@ -47,8 +49,8 @@ const allCriteriaTypes = [
   { id: 'amount', name: 'Amount', placeholder: '5', inputType: 'number', max: 15 },
   { id: 'name', name: 'Name', placeholder: 'pick up 20 rocks simulator...', inputType: 'text' },
   { id: 'description', name: 'Description', placeholder: 'in this game you pick up 20 rocks...', inputType: 'text' },
-  { id: 'plays', name: 'Plays', placeholder: '10000...', inputType: 'number' },
-  { id: 'likes', name: 'Likes', placeholder: '78922...', inputType: 'number' },
+  { id: 'plays', name: 'Visits', placeholder: '10000...', inputType: 'number' },
+  { id: 'likes', name: 'Favorites', placeholder: '78922...', inputType: 'number' },
   { id: 'players', name: 'Active Players', placeholder: '45...', inputType: 'number' }
 ];
 
@@ -88,7 +90,7 @@ const Home = () => {
 
   const addSearchBar = () => {
     const availableCriteria = allCriteriaTypes.filter(type => !usedCriteria.includes(type.id));
-    
+
     // show tooltip and don't add more search bars
     if (availableCriteria.length === 0) {
       setShowTooltip(true);
@@ -100,10 +102,10 @@ const Home = () => {
     const newId = searchBars.length > 0
       ? Math.max(...searchBars.map(bar => bar.id)) + 1
       : 1;
-    
+
     const updatedSearchBars = [...searchBars, { id: newId, category: newCategory, query: '' }];
     setSearchBars(updatedSearchBars);
-    
+
     // Update used criteria
     setUsedCriteria([...usedCriteria, newCategory]);
 
@@ -115,7 +117,7 @@ const Home = () => {
   const deleteSearchBar = (id) => {
     // Find the search bar to be deleted
     const barToDelete = searchBars.find(bar => bar.id === id);
-    
+
     // Don't allow deletion of amount criteria
     if (barToDelete.category === 'amount') {
       return;
@@ -124,7 +126,7 @@ const Home = () => {
     if (searchBars.length > 1) {
       const updatedSearchBars = searchBars.filter(bar => bar.id !== id);
       setSearchBars(updatedSearchBars);
-      
+
       setUsedCriteria(usedCriteria.filter(c => c !== barToDelete.category));
 
       if (updatedSearchBars.length <= 4 && showTooltip) {
@@ -133,14 +135,31 @@ const Home = () => {
     }
   };
 
+  const calculatePercentage = (game, criteria) => {
+    return Math.floor(Math.random() * 100);
+  }
+
+
+  const getImageURL = async (gameId) => {
+    try {
+      const response = await fetch(`https://thumbnails.roproxy.com/v1/games/multiget/thumbnails?universeIds=${gameId}&size=768x432&format=Png&isCircular=false`);
+      const data = await response.json();
+      const imageUrl = data.data[0].thumbnails[0].imageUrl;
+      return imageUrl;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleSearch = async (e) => {
     e.preventDefault();
 
     if (searchActive) return;
-    
+
     setSearchActive(true);
 
     console.log('Search Criteria:', searchBars);
+
 
     // Step 1: Request received
     setSearchTextClass("search-progress-text-4 text-fade");
@@ -150,7 +169,7 @@ const Home = () => {
     setSearchTextClass("search-progress-text-1");
 
     await delay(2000); // Additional delay to simulate loading for now
-                       // This is probably where the code would be to await a signal to move to the next step
+    // This is probably where the code would be to await a signal to move to the next step
 
     // Step 2: Thinking
     setSearchTextClass("search-progress-text-1 text-fade");
@@ -159,7 +178,20 @@ const Home = () => {
     await delay(500);
     setSearchTextClass("search-progress-text-2");
 
-    await delay(2000); // Another loading simulation delay
+    const res = await axios.post('https://r8oxhje7na.execute-api.us-east-1.amazonaws.com/dev/search/brain', {
+      numGames: parseInt(searchBars[0].query),
+      searchCriteria: {
+        name: searchBars.filter(bar => bar.category === 'name')[0]?.query,
+        description: searchBars.filter(bar => bar.category === 'description')[0]?.query,
+        visits: parseInt(searchBars.filter(bar => bar.category === 'plays')[0]?.query),
+        favoritedCount: parseInt(searchBars.filter(bar => bar.category === 'likes')[0]?.query),
+        playing: parseInt(searchBars.filter(bar => bar.category === 'players')[0]?.query)
+      }
+
+    })
+    const games = res.data['data'];
+    console.log(games);
+    // await delay(2000); // Another loading simulation delay
 
     // Step 3: Data received
     setSearchTextClass("search-progress-text-2 text-fade");
@@ -169,13 +201,15 @@ const Home = () => {
     setSearchTextClass("search-progress-text-3");
 
     await delay(2000); // Processing simulation delay (?)
-    
+
     // Filter out empty queries for API call
     const validSearchBars = searchBars.filter(bar => bar.query.trim() !== '');
-    
-    // In the future, we would make an API call here
-    // For now, we'll just use our dummy data
-    setSearchResults(dummyGames);
+
+    const fulfilledGames = await Promise.all(games.map(async game => {
+      const imageUrl = await getImageURL(game.id);
+      return { ...game, matchPercentage: calculatePercentage(game, searchBars), imageUrl: imageUrl, gameUrl: `https://www.roblox.com/games/start?placeId=${game.rootPlaceId}` };
+    }))
+    setSearchResults(fulfilledGames);
     setHasSearched(true);
 
     // Step 4: (clear text)
@@ -184,21 +218,21 @@ const Home = () => {
     setSearchTextClass("search-progress-text-4 text-fade");
     await delay(500);
     setSearchTextClass("search-progress-text-4");
-    
+
     setSearchActive(false);
   };
 
   const handleCategoryChange = (id, newCategory) => {
     const searchBar = searchBars.find(bar => bar.id === id);
-    
+
     if (searchBar.category === 'amount') {
       return;
     }
-    
+
 
     const oldCategory = searchBar.category;
     setUsedCriteria([...usedCriteria.filter(c => c !== oldCategory), newCategory]);
-    
+
 
     const updatedSearchBars = searchBars.map(bar =>
       bar.id === id ? { ...bar, category: newCategory, query: '' } : bar
@@ -231,7 +265,7 @@ const Home = () => {
     if (currentCategory === 'amount') {
       return [allCriteriaTypes.find(type => type.id === 'amount')];
     }
-    
+
     // return current + available
     return [
       allCriteriaTypes.find(type => type.id === currentCategory),
@@ -242,8 +276,8 @@ const Home = () => {
   return (
     <div className="homepage-container">
       <Tooltip
-        message={allCriteriaTypes.length === usedCriteria.length 
-          ? "You've used all available criteria types." 
+        message={allCriteriaTypes.length === usedCriteria.length
+          ? "You've used all available criteria types."
           : "Adding too much criteria can slow down your search. Consider narrowing your criteria for quicker searches!"}
         type="warning"
         visible={showTooltip}
@@ -346,8 +380,13 @@ const Home = () => {
               Add criteria
             </button>
           </div>
+<<<<<<< HEAD
+          <div className="search-progress-text-container">
+            <p className={searchTextClass} />
+=======
           <div class="search-progress-text-container">
-            <p class={"search-progress-text " + searchTextClass}/>
+            <p class={searchTextClass}/>
+>>>>>>> aca1c595cd5b0e7c74bfb3d23677f1b4d31fd608
           </div>
         </form>
 
