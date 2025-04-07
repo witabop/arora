@@ -268,8 +268,9 @@ const Home = () => {
     ];
   };
 
+
   return (
-    <div className="homepage-container">
+    <div className={"homepage-container fantastic"}>
       <Tooltip
         message={allCriteriaTypes.length === usedCriteria.length
           ? "You've used all available criteria types."
