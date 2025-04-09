@@ -156,7 +156,7 @@ const Home = () => {
 
     const fulfilledGames = await Promise.all(games.map(async game => {
       const imageUrl = await getImageURL(game.id);
-      return { ...game, matchPercentage: calculatePercentage(game, searchBars), imageUrl: imageUrl, gameUrl: `https://www.roblox.com/games/start?placeId=${game.rootPlaceId}` };
+      return { ...game, matchPercentage: 100 * game.percentMatch, imageUrl: imageUrl, gameUrl: `https://www.roblox.com/games/start?placeId=${game.rootPlaceId}` };
     }))
     
     
@@ -270,7 +270,7 @@ const Home = () => {
 
 
   return (
-    <div className={"homepage-container fantastic"}>
+    <div className={"homepage-container"}>
       <Tooltip
         message={allCriteriaTypes.length === usedCriteria.length
           ? "You've used all available criteria types."
