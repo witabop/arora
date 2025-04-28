@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faHome, faInfoCircle, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/About.css';
 import logo from '../../assets/aroralogo.png';
+import plainSearch from '../../assets/plainsearch.gif';
+import oneCriteria from '../../assets/onecriteria.gif';
+import toomMuchCriteria from '../../assets/toomuchcriteria.gif';
+
 
 const About = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -86,7 +90,12 @@ const About = () => {
           <h2>What is ARORA?</h2>
           <p>ARORA is a search engine for Roblox games that allows users to view games by criteria they specify. It works by rapidly querying games from the Roblox API at random, returning games to the user that match their criteria. This is necessary because querying every game Roblox has sequentially would take months, assuming whatever program you use doesn't get rate limited or IP-banned in the process; in other words, just searching for games directly to get all of them isn't feasible. </p>
           <h2>How do I use ARORA?</h2>
-          <p>[waiting for site completion; include gifs here]</p>
+          <p>To use ARORA you can start by simply entering the amount of data you want returned:</p>
+          <img src={plainSearch}></img>
+          <p>You may also enter other criteria, here is an example using 1 piece of criteria:</p>
+          <img src={oneCriteria}></img>
+          <p>If you enter a lot of criteria, you will receive a warning to broaden your search. You may also delete criteria like in the example:</p>
+          <img src={toomMuchCriteria}></img>
           <h2>Why ARORA?</h2>
           <p>
             ARORA was created out of a desire to see more unique games than are shown on the Roblox homepage. While games shown on the homepage are generally popular, they often perpetuate similar gameplay and design elements that can be tired with overuse. We wanted to create a way to find games that Roblox wouldn't recommend but were still fun (or perhaps fun *because* of that): "hidden gems", in other phrasing.

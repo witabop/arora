@@ -138,7 +138,7 @@ const Home = () => {
     await delay(500);
     setSearchTextClass("search-progress-text-2");
 
-    const res = await axios.post('https://r8oxhje7na.execute-api.us-east-1.amazonaws.com/dev/search/brain', {
+    const res = await axios.post('https://r8oxhje7na.execute-api.us-east-1.amazonaws.com/prod/search/brain', {
       numGames: parseInt(searchBars[0].query),
       searchCriteria: {
         name: searchBars.filter(bar => bar.category === 'name')[0]?.query,
